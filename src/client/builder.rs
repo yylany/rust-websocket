@@ -469,6 +469,21 @@ impl<'u> ClientBuilder<'u> {
 		self.connect_on(ssl_stream)
 	}
 
+	/// Create an SSL connection to the sever.
+	/// This will only use an `TlsStream`, this is useful
+	/// when you want to be sure to connect over SSL or when you want access
+	/// to the `TlsStream` functions (without having to go through a `Box`).
+	#[cfg(feature = "sync-ssl")]
+	pub fn connect_secure_wrap(
+		&mut self,
+		ssl_config: Option<TlsConnector>,
+		tcp_stream:TcpStream,
+	) -> WebSocketResult<Client<TlsStream<TcpStream>>> {
+		let ssl_stream = self.wrap_ssl(tcp_stream, ssl_config)?;
+
+		self.connect_on(ssl_stream)
+	}
+
 	/// Connects to a websocket server on any stream you would like.
 	/// Possible streams:
 	///  - Unix Sockets
